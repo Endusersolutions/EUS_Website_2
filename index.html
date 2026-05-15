@@ -1093,49 +1093,53 @@
                     </a>
                 </div>
             </div>
-            <div class="contact-form" id="contactForm">
+            <form class="contact-form" id="contactForm" action="https://formspree.io/f/mgodgkey" method="POST">
+                <!-- Honeypot spam filter (hidden from real users) -->
+                <input type="text" name="_gotcha" style="display:none">
+                <!-- Custom subject line for emails you receive -->
+                <input type="hidden" name="_subject" value="New EUS Website Inquiry">
                 <div class="form-row">
                     <div class="form-field">
                         <label>First Name</label>
-                        <input type="text" placeholder="First name" required>
+                        <input type="text" name="first_name" placeholder="First name" required>
                     </div>
                     <div class="form-field">
                         <label>Last Name</label>
-                        <input type="text" placeholder="Last name" required>
+                        <input type="text" name="last_name" placeholder="Last name" required>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-field">
                         <label>Email</label>
-                        <input type="email" placeholder="your@email.com" required>
+                        <input type="email" name="email" placeholder="your@email.com" required>
                     </div>
                     <div class="form-field">
                         <label>Organization</label>
-                        <input type="text" placeholder="Organization name">
+                        <input type="text" name="organization" placeholder="Organization name">
                     </div>
                 </div>
                 <div class="form-field">
                     <label>Area of Interest</label>
-                    <select>
+                    <select name="area_of_interest">
                         <option value="">Select an area...</option>
-                        <option value="advise">Advisement</option>
-                        <option value="integrate">Integration</option>
-                        <option value="innovate">Innovation</option>
-                        <option value="train">Training</option>
-                        <option value="partnership">Partnerships</option>
-                        <option value="other">Other</option>
+                        <option value="Advisement">Advisement</option>
+                        <option value="Integration">Integration</option>
+                        <option value="Innovation">Innovation</option>
+                        <option value="Training">Training</option>
+                        <option value="Partnerships">Partnerships</option>
+                        <option value="Other">Other</option>
                     </select>
                 </div>
                 <div class="form-field">
                     <label>Message</label>
-                    <textarea placeholder="Tell us about your mission or requirement..."></textarea>
+                    <textarea name="message" placeholder="Tell us about your mission or requirement..."></textarea>
                 </div>
                 <div>
-                    <button type="button" class="btn btn-solid" onclick="handleSubmit()">
+                    <button type="submit" class="btn btn-solid" id="contactSubmitBtn">
                         Send Message <span class="btn-arrow">→</span>
                     </button>
                 </div>
-            </div>
+            </form>
         </div>
     </section>
 
@@ -1247,32 +1251,53 @@
         }, 2000);
     }
 
-    // Form handler placeholder
-    function handleSubmit() {
-        const firstName = document.querySelector('#contactForm input[placeholder="First name"]').value;
-        const lastName = document.querySelector('#contactForm input[placeholder="Last name"]').value;
-        const email = document.querySelector('#contactForm input[placeholder="your@email.com"]').value;
-        const org = document.querySelector('#contactForm input[placeholder="Organization name"]').value;
-        const area = document.querySelector('#contactForm select').value;
-        const message = document.querySelector('#contactForm textarea').value;
-        const subject = 'Discovery Call Request from ' + firstName + ' ' + lastName;
-        const body = 'Name: ' + firstName + ' ' + lastName + '%0AEmail: ' + email + '%0AOrganization: ' + org + '%0AArea of Interest: ' + area + '%0A%0AMessage: ' + message;
-        window.location.href = 'mailto:info@endusersolutions.us?subject=' + encodeURIComponent(subject) + '&body=' + body;
-        const btn = document.querySelector('#contactForm .btn-solid');
-        const orig = btn.innerHTML;
-        btn.innerHTML = 'Message Sent ✓';
-        btn.style.background = '#2E7D32';
+    // Contact form submission via Formspree
+    const contactForm = document.getElementById('contactForm');
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('contactSubmitBtn');
+        const origHTML = btn.innerHTML;
+        btn.innerHTML = 'Sending...';
         btn.style.pointerEvents = 'none';
-        setTimeout(() => {
-            btn.innerHTML = orig; btn.style.background = ''; btn.style.pointerEvents = '';
-            document.querySelectorAll('#contactForm input, #contactForm textarea, #contactForm select').forEach(f => f.value = '');
-        }, 3000);
-    }
+
+        fetch(this.action, {
+            method: 'POST',
+            body: new FormData(this),
+            headers: { 'Accept': 'application/json' }
+        }).then(function(response) {
+            if (response.ok) {
+                btn.innerHTML = 'Message Sent ✓';
+                btn.style.background = '#2E7D32';
+                contactForm.reset();
+                setTimeout(function() {
+                    btn.innerHTML = origHTML;
+                    btn.style.background = '';
+                    btn.style.pointerEvents = '';
+                }, 3000);
+            } else {
+                btn.innerHTML = 'Error — Try Again';
+                btn.style.background = '#C62828';
+                setTimeout(function() {
+                    btn.innerHTML = origHTML;
+                    btn.style.background = '';
+                    btn.style.pointerEvents = '';
+                }, 3000);
+            }
+        }).catch(function() {
+            btn.innerHTML = 'Error — Try Again';
+            btn.style.background = '#C62828';
+            setTimeout(function() {
+                btn.innerHTML = origHTML;
+                btn.style.background = '';
+                btn.style.pointerEvents = '';
+            }, 3000);
+        });
+    });
 
     // Scroll to top button
     const scrollBtn = document.getElementById('scrollTop');
     window.addEventListener('scroll', () => {
-        const halfway = document.documentElement.scrollHeight / 2 - window.innerHeight;
+        const halfway = 300;
         scrollBtn.classList.toggle('visible', window.scrollY > halfway);
     });
     scrollBtn.addEventListener('click', () => {
