@@ -1093,11 +1093,7 @@
                     </a>
                 </div>
             </div>
-            <form class="contact-form" id="contactForm" action="https://formspree.io/f/mgodgkey" method="POST">
-                <!-- Honeypot spam filter (hidden from real users) -->
-                <input type="text" name="_gotcha" style="display:none">
-                <!-- Custom subject line for emails you receive -->
-                <input type="hidden" name="_subject" value="New EUS Website Inquiry">
+            <div class="contact-form" id="contactForm">
                 <div class="form-row">
                     <div class="form-field">
                         <label>First Name</label>
@@ -1135,11 +1131,11 @@
                     <textarea name="message" placeholder="Tell us about your mission or requirement..."></textarea>
                 </div>
                 <div>
-                    <button type="submit" class="btn btn-solid" id="contactSubmitBtn">
+                    <button type="button" class="btn btn-solid" id="contactSubmitBtn" onclick="handleSubmit()">
                         Send Message <span class="btn-arrow">→</span>
                     </button>
                 </div>
-            </form>
+            </div>
         </div>
     </section>
 
@@ -1251,48 +1247,31 @@
         }, 2000);
     }
 
-    // Contact form submission via Formspree
-    const contactForm = document.getElementById('contactForm');
-    contactForm.addEventListener('submit', function(e) {
-        e.preventDefault();
+    // Contact form submission via mailto
+    function handleSubmit() {
+        const firstName = document.querySelector('#contactForm input[name="first_name"]').value;
+        const lastName = document.querySelector('#contactForm input[name="last_name"]').value;
+        const email = document.querySelector('#contactForm input[name="email"]').value;
+        const org = document.querySelector('#contactForm input[name="organization"]').value;
+        const area = document.querySelector('#contactForm select[name="area_of_interest"]').value;
+        const message = document.querySelector('#contactForm textarea[name="message"]').value;
+        if (!firstName || !lastName || !email) { alert('Please fill in your name and email.'); return; }
+        const subject = 'EUS Website Inquiry — ' + firstName + ' ' + lastName;
+        const body = 'Name: ' + firstName + ' ' + lastName
+            + '%0AEmail: ' + email
+            + '%0AOrganization: ' + (org || 'N/A')
+            + '%0AArea of Interest: ' + (area || 'N/A')
+            + '%0A%0AMessage:%0A' + encodeURIComponent(message);
+        window.location.href = 'mailto:info@endusersolutions.us?subject=' + encodeURIComponent(subject) + '&body=' + body;
         const btn = document.getElementById('contactSubmitBtn');
-        const origHTML = btn.innerHTML;
-        btn.innerHTML = 'Sending...';
-        btn.style.pointerEvents = 'none';
-
-        fetch(this.action, {
-            method: 'POST',
-            body: new FormData(this),
-            headers: { 'Accept': 'application/json' }
-        }).then(function(response) {
-            if (response.ok) {
-                btn.innerHTML = 'Message Sent ✓';
-                btn.style.background = '#2E7D32';
-                contactForm.reset();
-                setTimeout(function() {
-                    btn.innerHTML = origHTML;
-                    btn.style.background = '';
-                    btn.style.pointerEvents = '';
-                }, 3000);
-            } else {
-                btn.innerHTML = 'Error — Try Again';
-                btn.style.background = '#C62828';
-                setTimeout(function() {
-                    btn.innerHTML = origHTML;
-                    btn.style.background = '';
-                    btn.style.pointerEvents = '';
-                }, 3000);
-            }
-        }).catch(function() {
-            btn.innerHTML = 'Error — Try Again';
-            btn.style.background = '#C62828';
-            setTimeout(function() {
-                btn.innerHTML = origHTML;
-                btn.style.background = '';
-                btn.style.pointerEvents = '';
-            }, 3000);
-        });
-    });
+        btn.innerHTML = 'Message Sent ✓';
+        btn.style.background = '#2E7D32';
+        setTimeout(function() {
+            btn.innerHTML = 'Send Message <span class="btn-arrow">→</span>';
+            btn.style.background = '';
+            document.querySelectorAll('#contactForm input, #contactForm textarea, #contactForm select').forEach(f => f.value = '');
+        }, 2000);
+    }
 
     // Scroll to top button
     const scrollBtn = document.getElementById('scrollTop');
