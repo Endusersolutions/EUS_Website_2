@@ -1042,6 +1042,16 @@
         prevBtn.addEventListener('click', () => { prevReview(); });
     }
 
+    // Reliable mailto opener — creates a real link and clicks it
+    function openMailto(url) {
+        var a = document.createElement('a');
+        a.href = url;
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function() { document.body.removeChild(a); }, 100);
+    }
+
     // Review submission
     function submitReview() {
         const name = document.getElementById('revName').value;
@@ -1050,7 +1060,7 @@
         const text = document.getElementById('revText').value;
         const subject = 'New Review from ' + name;
         const body = 'Name: ' + name + '%0AOrganization: ' + org + '%0ATitle: ' + title + '%0A%0AReview: ' + text;
-        window.location.href = 'mailto:info@endusersolutions.us?subject=' + encodeURIComponent(subject) + '&body=' + body;
+        openMailto('mailto:info@endusersolutions.us?subject=' + encodeURIComponent(subject) + '&body=' + body);
         const btn = document.querySelector('#reviewForm .btn-solid');
         btn.innerHTML = 'Thank You ✓';
         btn.style.background = '#2E7D32';
