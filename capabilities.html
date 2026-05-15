@@ -875,7 +875,7 @@
                 </div>
             </li>
             <li class="nav-item"><a href="about.html#reviews">Reviews</a></li>
-            <li class="nav-cta-wrap"><a href="index.html#contact" class="nav-cta-link">Contact</a></li>
+            <li class="nav-cta-wrap"><a href="mailto:info@endusersolutions.us" class="nav-cta-link">Contact</a></li>
         </ul>
         <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
             <span></span><span></span><span></span>
@@ -963,7 +963,7 @@
     <!-- CTA -->
     <div class="reveal" style="padding:50px 80px;background:var(--navy);border-bottom:1px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:24px;">
         <p style="font-family:'Crimson Pro',serif;font-size:1.3rem;color:var(--muted);max-width:600px;line-height:1.7;font-style:italic;margin:0;text-align:center;">Ready to put real-world perspective behind your next project? Let's get to work.</p>
-        <a class="btn btn-solid" href="index.html#contact">Start the Conversation <span class="btn-arrow">→</span></a>
+        <a class="btn btn-solid" href="mailto:info@endusersolutions.us">Start the Conversation <span class="btn-arrow">→</span></a>
     </div>
 
 
@@ -1019,19 +1019,6 @@
         entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
     }, { threshold: 0.12 });
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-    // Form handler placeholder
-    function handleSubmit() {
-        const btn = document.querySelector('#contactForm .btn-solid');
-        const orig = btn.innerHTML;
-        btn.innerHTML = 'Message Sent ✓';
-        btn.style.background = '#2E7D32';
-        btn.style.pointerEvents = 'none';
-        setTimeout(() => {
-            btn.innerHTML = orig; btn.style.background = ''; btn.style.pointerEvents = '';
-            document.querySelectorAll('#contactForm input, #contactForm textarea, #contactForm select').forEach(f => f.value = '');
-        }, 3000);
-    }
 
     // Scroll to top button
     const scrollBtn = document.getElementById('scrollTop');
